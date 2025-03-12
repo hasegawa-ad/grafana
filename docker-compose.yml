@@ -13,27 +13,37 @@ services:
       - db_data:/var/lib/mysql
 
   grafana:
-    image: grafana/grafana
+    build:
+      context: ./grafana
+      dockerfile: Dockerfile
     container_name: grafana
     ports:
       - "3001:3000"
     volumes:
       - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
 
   node_app:
-    build: .
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: node_api
     depends_on:
       - db
     ports:
       - "3000:3000"
+    env_file:
+      - .env
     environment:
       DB_HOST: db
       DB_USER: user
       DB_PASSWORD: password
       DB_NAME: grafana_db
     volumes:
-      - .:/app
+      - ./backend:/app
       - /app/node_modules
     working_dir: /app
     command: ["node", "server.js"]

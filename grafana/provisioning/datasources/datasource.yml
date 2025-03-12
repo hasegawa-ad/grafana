@@ -1,0 +1,13 @@
+apiVersion: 1
+
+datasources:
+  - name: MyDataSource
+    type: mysql
+    url: db:3306
+    user: user
+    database: grafana_db
+    isDefault: true
+    jsonData:
+      tlsSkipVerify: true
+    secureJsonData:
+      password: 'password'
